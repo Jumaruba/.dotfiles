@@ -4,8 +4,8 @@ function _peco_change_directory
   else
     peco --layout=bottom-up |perl -pe 's/([ ()])/\\\\$1/g'|read foo
   end
-  if [ $foo ]
-    builtin cd $foo
+  if [ $foo ]  
+    builtin cd $foo 
     commandline -r ''
     commandline -f repaint
   else
@@ -14,8 +14,9 @@ function _peco_change_directory
 end
 
 function peco_change_directory
-  begin
-    echo $HOME/.config 
-	ls /mnt/c/Users/julia/Documents
+  begin 
+    echo $HOME/.config/fish
+    echo $HOME/Documents
+    echo (ls -ad $HOME/Documents/*) | sed 's/\s/\n/g' 
   end | sed -e 's/\/$//' | awk '!a[$0]++' | _peco_change_directory $argv
 end
