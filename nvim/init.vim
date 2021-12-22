@@ -1,146 +1,58 @@
-" Nice reference https://gist.github.com/synasius/5cdc75c1c8171732c817  
-"
-call plug#begin('~/AppData/local/nvim/autoload')  
+call plug#begin('~/.vim/plugged') 
+    " Theme 
+    Plug 'joshdick/onedark.vim'  
+    Plug 'dracula/vim'   
 
-Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' } 
-Plug 'joshdick/onedark.vim' 
-Plug 'neovim/nvim-lspconfig' 
+    Plug 'ryanoasis/vim-devicons'
+    Plug 'scrooloose/nerdtree'
+    Plug 'preservim/nerdcommenter' 
+    Plug 'mhinz/vim-startify' 
 
-" autocompletion  
-Plug 'hrsh7th/cmp-nvim-lsp'
-Plug 'hrsh7th/cmp-buffer'
-Plug 'hrsh7th/nvim-cmp'  
-Plug 'hrsh7th/cmp-vsnip'
-Plug 'hrsh7th/vim-vsnip'  
+    " Better status line theme 
+    Plug 'vim-airline/vim-airline'
+    Plug 'vim-airline/vim-airline-themes' 
+call plug#end()
 
-" better statusline
-Plug 'vim-airline/vim-airline'
-Plug 'vim-airline/vim-airline-themes' 
+" UI Cofig{{
+set showmatch 			    " Show matching
+set ignorecase 			    " Case insensitive
+set mouse=v			        " Middle-click paste with
+set hlsearch			    " Highlight search
+set tabstop=4			    " Number of columns occupied by a tab
+set softtabstop=4		    " See multiple spaces as a tabstop so <BS> does the right thing
+set shiftwidth=4
+set expandtab 			    " Converts tab to white space
+set autoindent			    " Indent a new line the same amoutn as the line just typed
+set wildmode=longest,list	" Get bash-like tab completions
+set cc=80			        " Set an 80 column border for good coding style
+set mouse=a			        " Enable mouse clicking
+set clipboard=unnamedplus	" Using system clipboard
+set cursorline
+set noswapfile			    " Disable swapfile 
+set number                  " Show line number 
+" }} UI config; 
 
-
-
-call plug#end()    
-
-
-" Commands {{{ 
-
-" Using powershell in neovim like :!commands => from :help shell-powershell" 
-let &shell = has('win32') ? 'powershell' : 'pwsh'
-let &shellcmdflag = '-NoLogo -NoProfile -ExecutionPolicy RemoteSigned -Command [Console]::InputEncoding=[Console]::OutputEncoding=[System.Text.Encoding]::UTF8;'
-let &shellredir = '2>&1 | Out-File -Encoding UTF8 %s; exit $LastExitCode'
-let &shellpipe = '2>&1 | Out-File -Encoding UTF8 %s; exit $LastExitCode'
-set shellquote= shellxquote=  
-
-nnoremap <C-n> :NERDTreeToggle<CR>  
-nnoremap <F8> :!java %    
-nnoremap <F9> :!gcc % -o out; .\out  
-nnoremap <C-l> :bnext<CR>  
-nnoremap <C-h> :bprevious<CR>
-" }}} Commands 
-
-
-" Spaces & Tabs {{{
-set tabstop=4
-set shiftwidth=4  
-set softtabstop=4
-" }}} Spaces && Tabs
+" Color schemes {{ 
+colorscheme onedark 
+syntax enable 
+"}} Color schemes; 
 
 
-" UI config {{{ 
-syntax enable
-colorscheme onedark			 
-set number						" Show line number.  
-set cursorline					" Highlight current line. 
-set showmatch					" Highlight matching brace.
-set noswapfile					" 
-filetype plugin indent on        
-" }}} UI config 
+" Keybinds {{ 
+nnoremap <C-n> :NERDTreeToggle<CR>
+" Move split panels
+nnoremap <A-h> <C-W>H
+nnoremap <A-j> <C-W>J
+nnoremap <A-k> <C-W>K
+nnoremap <A-l> <C-W>L 
+" }} Keybinds; 
 
-" vim-airline {{{ 
+" vim-airline {{
 let g:airline#extensions#tabline#enabled = 1					" Smarter tab line.
 let g:airline#extensions#tabline#formatter = 'unique_tail'  
 " Themes : https://github.com/vim-airline/vim-airline/wiki/Screenshots 
-" }}} vim-airline 
+" }} 
 
-
-"LSP   ------------------------------------------------------------
-"https://github.com/neovim/nvim-lspconfig
-lua << EOF
-require'lspconfig'.clangd.setup{}  
-require'lspconfig'.pylsp.setup{} 
-require'lspconfig'.gopls.setup{}
-require'lspconfig'.eslint.setup{} 
-EOF
-
-nnoremap <C-a> :autocmd BufWritePre <buffer> <cmd>EslintFixAll<CR>
-
-
-" AUTOCOMPLETION --------------------------------------------------  
-" https://github.com/hrsh7th/nvim-cmp/
-
-set completeopt=menu,menuone,noselect
-
-lua << EOF
-  -- Setup nvim-cmp.
-  local cmp = require'cmp'
-
-  cmp.setup({
-    snippet = {
-      expand = function(args)
-        vim.fn["vsnip#anonymous"](args.body)
-      end,
-    },
-	mapping = {
-	  ['<C-n>'] = cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Insert }),
-	  ['<C-p>'] = cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Insert }),
-	  ['<Down>'] = cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Select }),
-	  ['<Up>'] = cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Select }),
-	  ['<C-d>'] = cmp.mapping.scroll_docs(-4),
-	  ['<C-f>'] = cmp.mapping.scroll_docs(4),
-	  ['<C-Space>'] = cmp.mapping.complete(),
-	  ['<C-e>'] = cmp.mapping.close(),
-	  ['<CR>'] = cmp.mapping.confirm({
-		behavior = cmp.ConfirmBehavior.Replace,
-		select = true
-	  })
-	},
-    sources = {
-      { name = 'nvim_lsp' },
-      { name = 'vsnip' },
-	  { name = 'buffer' }
-    }
-  })
-	require('lspconfig').clangd.setup {
-		capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
-	}  
-
-EOF
-" gopls config {{{ 
-lua <<EOF
-  lspconfig = require "lspconfig"
-  lspconfig.gopls.setup {
-    cmd = {"gopls", "serve"},
-    settings = {
-      gopls = {
-        analyses = {
-          unusedparams = true,
-        },
-        staticcheck = true,
-      },
-    },
-  }
-EOF
-" }}} gopls config  
-
-" html config {{{
-lua << EOF
-local capabilities = vim.lsp.protocol.make_client_capabilities()
-capabilities.textDocument.completion.completionItem.snippetSupport = true
-
-require'lspconfig'.html.setup {
-  capabilities = capabilities,
-} 
-EOF
-
-" }}} html config 
-
+" nnoremap => normal mode
+" vnoremap => visual mode 
+" inorepmap => insert mode  
