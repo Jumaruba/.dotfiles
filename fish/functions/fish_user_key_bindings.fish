@@ -2,7 +2,7 @@ function fish_user_key_bindings
   # peco
   bind \cr peco_select_history # Bind for peco select history to Ctrl+R
   bind \cf peco_change_directory # Bind for peco change directory to Ctrl+F
-
+  bind \cs peco_saved_commands # Bind for peco get favorite commands to Ctrl+S
   # vim-like
   bind \cl forward-char
 
