@@ -16,7 +16,9 @@ end
 function peco_change_directory
   begin 
     echo $HOME/.config/fish
+    echo $HOME/.config/nvim
     echo $HOME/Documents
     echo (ls -ad $HOME/Documents/*) | sed 's/\s/\n/g' 
+    echo (ls -ad $HOME/Documents/tts/*) | sed 's/\s/\n/g' 
   end | sed -e 's/\/$//' | awk '!a[$0]++' | _peco_change_directory $argv
 end

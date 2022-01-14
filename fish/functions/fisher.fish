@@ -206,4 +206,4 @@ function _fisher_fish_postexec --on-event fish_postexec
         set --erase fisher_data
     end
     functions --erase _fisher_fish_postexec
-end
+    

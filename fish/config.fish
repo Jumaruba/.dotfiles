@@ -1,10 +1,9 @@
+
 if status is-interactive
     # Commands to run in interactive sessions can go here 
-    set PATH ~/neovim/build/bin $PATH
     set PATH ~/.cargo/bin $PATH  
-	set PATH ~/libgit2/ $PATH
-    set PATH ~/miniconda3/bin/ $PATH 
     set PATH ~/bin/ $PATH
+    set PATH ~/gradle/bin/ $PATH	
 end
 
 # aliases 

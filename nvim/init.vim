@@ -11,7 +11,20 @@ call plug#begin('~/.vim/plugged')
     " Better status line theme 
     Plug 'vim-airline/vim-airline'
     Plug 'vim-airline/vim-airline-themes' 
+
+    " LSP 
+    Plug 'neovim/nvim-lspconfig'
+
+    " Telescope
+    Plug 'nvim-lua/plenary.nvim'
+    Plug 'nvim-telescope/telescope.nvim'   
+
+    " Markdown
+    Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug']}
 call plug#end()
+
+" Require plugins 
+lua require('myplugin')
 
 " UI Cofig{{
 set showmatch 			    " Show matching
@@ -38,13 +51,9 @@ syntax enable
 "}} Color schemes; 
 
 
-" Keybinds {{ 
+"Keybinds {{ 
+nnoremap <A-f> :Telescope find_files<CR>
 nnoremap <C-n> :NERDTreeToggle<CR>
-" Move split panels
-nnoremap <A-h> <C-W>H
-nnoremap <A-j> <C-W>J
-nnoremap <A-k> <C-W>K
-nnoremap <A-l> <C-W>L 
 " }} Keybinds; 
 
 " vim-airline {{
