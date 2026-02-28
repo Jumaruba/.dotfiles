@@ -1,3 +1,8 @@
 # Dotfiles
 
-Some of my dotfiles for nvim and shell configurations. 
+To install the dotfiles in your machine, you should execute the script as:
+
+```bash
+bash ./install.sh
+```
+
