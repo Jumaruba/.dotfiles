@@ -3,6 +3,7 @@
 To install the dotfiles in your machine, you should execute the script as:
 
 ```bash
-bash ./install.sh
+chmod 770 install.fish
+fish ./install.fish
 ```
 
