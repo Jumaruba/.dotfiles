@@ -9,12 +9,15 @@ cp -r ./nvim/ $vimpath && sudo chown -R $USER $vimpath
 set kittypath "$HOME/.config/kitty/"
 echo "Moving ./kitty/ to $kittypath"
 
-# FISH
+# FISH ======================== 
 #curl -sL https://raw.githubusercontent.com/jorgebucaran/fisher/main/functions/fisher.fish | source && fisher install jorgebucaran/fisher
 set fishpath "$HOME/.config/fish/"
 echo "Moving ./fish/ to $fishpath"
 cp -r ./fish/ $fishpath 
 sudo chown -R $USER $fishpath
-omf install slacker
+# install oh-my-fish
+curl https://raw.githubusercontent.com/oh-my-fish/oh-my-fish/master/bin/install | fish
+omf install lavender
+omf theme lavender
 fisher update
 
