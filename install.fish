@@ -21,3 +21,15 @@ omf install lavender
 omf theme lavender
 fisher update
 
+# DOOM ========================
+# Install
+# git clone --depth 1 https://github.com/doomemacs/doomemacs ~/.config/emacs
+# ~/.config/emacs/bin/doom install
+set doompath "$HOME/.config/doom/"
+cp -r ./doom/ $doompath 
+echo "Moving ./doom/ to $doompath"
+sudo chown -R $USER $doompath
+# Install the fonts for icons
+git clone https://github.com/domtronn/all-the-icons.el
+sudo cp all-the-icons.el/fonts/*.ttf ~/Library/Fonts/
+rm -r -f all-the-icons.el
