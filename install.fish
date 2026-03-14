@@ -1,35 +1,57 @@
-#!/usr/bin/env fish 
+#!/usr/bin/env fish
 
-# NVIM
-set vimpath "$HOME/.config/nvim/"
-echo "Moving ./nvim to $vimpath"
-cp -r ./nvim/ $vimpath && sudo chown -R $USER $vimpath
+# Usage: install.fish [module...]
+# Modules: nvim fish kitty doom ghostty packages
+# Default: installs all modules
 
-# KITTY
-set kittypath "$HOME/.config/kitty/"
-echo "Moving ./kitty/ to $kittypath"
+function install_config -a name src dest
+    echo "Installing $name: $src -> $dest"
+    cp -r $src $dest && sudo chown -R $USER $dest
+end
 
-# FISH ======================== 
-#curl -sL https://raw.githubusercontent.com/jorgebucaran/fisher/main/functions/fisher.fish | source && fisher install jorgebucaran/fisher
-set fishpath "$HOME/.config/fish/"
-echo "Moving ./fish/ to $fishpath"
-cp -r ./fish/ $fishpath 
-sudo chown -R $USER $fishpath
-# install oh-my-fish
-curl https://raw.githubusercontent.com/oh-my-fish/oh-my-fish/master/bin/install | fish
-omf install lavender
-omf theme lavender
-fisher update
+function module_nvim
+    install_config nvim ./nvim/ $HOME/.config/nvim/
+end
 
-# DOOM ========================
-# Install
-# git clone --depth 1 https://github.com/doomemacs/doomemacs ~/.config/emacs
-# ~/.config/emacs/bin/doom install
-set doompath "$HOME/.config/doom/"
-cp -r ./doom/ $doompath 
-echo "Moving ./doom/ to $doompath"
-sudo chown -R $USER $doompath
-# Install the fonts for icons
-git clone https://github.com/domtronn/all-the-icons.el
-sudo cp all-the-icons.el/fonts/*.ttf ~/Library/Fonts/
-rm -r -f all-the-icons.el
+function module_fish
+    install_config fish ./fish/ $HOME/.config/fish/
+    curl https://raw.githubusercontent.com/oh-my-fish/oh-my-fish/master/bin/install | fish
+    omf install lavender && omf theme lavender
+    fisher update
+end
+
+function module_kitty
+    install_config kitty ./kitty/ $HOME/.config/kitty/
+end
+
+function module_doom
+    install_config doom ./doom/ $HOME/.config/doom/
+    git clone https://github.com/domtronn/all-the-icons.el
+    sudo cp all-the-icons.el/fonts/*.ttf $HOME/Library/Fonts/
+    rm -rf all-the-icons.el
+end
+
+function module_ghostty
+    install_config ghostty ./ghostty/ "$HOME/Library/Application Support/com.mitchellh.ghostty/"
+end
+
+function module_packages
+    fish packages.fish
+end
+
+set -l all_modules nvim fish kitty doom ghostty packages
+set -l modules $argv
+
+if test (count $modules) -eq 0
+  echo "Installing all modules"
+  set modules $all_modules
+end 
+
+for m in $modules
+    if contains $m $all_modules
+        module_$m
+    else
+        echo "Unknown module: $m (available: $all_modules)"
+        exit 1
+    end
+end
