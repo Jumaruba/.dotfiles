@@ -1,6 +1,7 @@
 [tools]
 # java = "temurin-11.0.28+6"
 java = "temurin-21"
+neovim = "latest"
 node = "23.11.0"
 opentofu = "1.10.5"
 rust-analyzer = "latest"
