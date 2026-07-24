@@ -9,6 +9,8 @@ if status is-interactive
     # Work scripts
     set PATH ~/Documents/relevancy-generator/scripts/launchers/ $PATH
     set PATH ~/Documents/relevancy-generator/scripts/bash/ $PATH
+
+    set -x TERRAPRISM_TOFU 1
 end
 
 # aliases for EZA  ======
@@ -21,6 +23,8 @@ alias llat "lla --tree"
 alias ghlog "git log --graph --decorate --pretty=format:'%C(auto)%h%C(reset) %C(cyan)%s%C(reset) %C(dim white)- %an, %ar%C(reset)'"
 alias ghpr "gh pr checkout"
 alias assume "source /opt/homebrew/bin/assume.fish"
+
+alias tp "terraprism"
 
 # theme ======
 set -g theme_nerd_fonts yes
@@ -46,10 +50,13 @@ set scripts \
     pblcat
 
 set sbtcommand \
-    "feature-extractor\reStartConf" \
-    "inference-producer\reStartConf" \
-    "model-trainer\reStartConf" \
-    "inference-uploader\reStartConf"
+    "sbt relevancy-generator/compile" \
+    "sbt relevancy-generator/test" \
+    "sbt event-predictors/test" \
+    "sbt relevancy-generator-feature-extractor/compile" \
+    "sbt relevancy-generator-feature-extractor/test" \
+    "sbt relevancy-generator-feature-extractor/reStartConf" \
+    "sbt relevancy-generator-it/test"
 
 bind \cs 'pick-display scripts'
 

@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="generator" content="pandoc">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+$for(author-meta)$
+		<meta name="author" content="$author-meta$">
+$endfor$
+$if(date-meta)$
+		<meta name="dcterms.date" content="$date-meta$">
+$endif$
+
+		<title>$if(title-prefix)$$title-prefix$ – $endif$$pagetitle$</title>
+
+		<!-- CSS Reset -->
+		<link rel="stylesheet" href="$TP_DIR$/normalize/normalize.min.css">
+
+		<!-- Font Awesome -->
+		<link rel="stylesheet" href="$TP_DIR$/font-awesome/css/font-awesome.min.css">
+
+		<!-- prism.js -->
+		<link rel="stylesheet" href="$TP_DIR$/prism.js/prism.css">
+		<style>
+			/* override prism max-height */
+			pre[class*="language-"],
+			pre[class*="language-"] > code[data-language] {
+				max-height: none;
+			}
+
+			/* fix shadow glitch in wkhtmltopdf */
+			pre[class*="language-"]:before,
+			pre[class*="language-"]:after {
+				-webkit-box-shadow: none;
+				-moz-box-shadow: none;
+				box-shadow: none;
+			}
+		</style>
+
+		<!-- KaTex -->
+		<link rel="stylesheet" href="$TP_DIR$/katex/katex.min.css">
+		<style>
+			/* allow line breaks */
+			.katex {
+				white-space: normal;
+			}
+
+			.math {
+				font-size: 10pt;
+			}
+
+			.math.display {
+				margin: 1em 0em;
+				display: block;
+				text-align: center;
+			}
+
+			img.latex-DisplayMath {
+				display: block;
+				margin: auto;
+			}
+		</style>
+
+		<!-- Base Style -->
+		<link rel="stylesheet" href="$TPL_DIR$/doc.css">
+
+		<!-- Custom Style -->
+$for(css)$
+		<link rel="stylesheet" href="$css$">
+$endfor$
+	</head>
+
+	<body>
+		<div class="container">
+
+$if(title)$
+			<header>
+				<div class="title">$title$</div>
+				<div class="subtitle">$subtitle$</div>
+				<ul class="authors">
+$for(author)$
+					<li>$author$</li>
+$endfor$
+				</ul>
+				<div class="date">$date$</div>
+			</header>
+$endif$
+
+$if(toc)$
+			<nav>$toc$</nav>
+$endif$
+
+			<main>$body$</main>
+
+		</div>
+
+		<script>
+			function getFootnoteParagraph(elem) {
+				while (elem.parentNode.tagName != 'SECTION') {
+					elem = elem.parentNode;
+				}
+
+				var footnoteParagraph = elem.nextSibling;
+				if (footnoteParagraph.tagName != 'P' || !footnoteParagraph.className.match(/footnotes/)) {
+					footnoteParagraph = document.createElement('P');
+					footnoteParagraph.setAttribute('class', 'footnotes');
+					elem.parentNode.insertBefore(footnoteParagraph, elem.nextSibling);
+				}
+
+				return footnoteParagraph
+			}
+
+			// Put footnotes right under the paragraph containing their referece.
+			function moveFootnotes() {
+				var footnotes = document.getElementsByClassName('footnotes')
+				if (footnotes.length == 0) {
+					return;
+				}
+				footnotes = footnotes[0];
+				var notes = footnotes.children[1].children;
+
+				for (var i = 1; i < notes.length + 1; i++) {
+					var note = document.getElementById('fn' + i).children[0];
+					var noteRef = document.getElementById('fnref' + i);
+
+					note.setAttribute('class', 'footnote');
+
+					// prepend	footnote number to footnote
+					var noteNum = document.createElement('SPAN');
+					noteNum.setAttribute('class', 'footnote-num');
+					var noteNumText = document.createElement('SUP');
+					noteNumText.textContent = i;
+					noteNum.appendChild(noteNumText);
+					note.insertBefore(noteNum, note.firstChild);
+
+					// append footnote to paragraph containing reference
+					getFootnoteParagraph(noteRef).appendChild(note);
+
+					// remove backwards link
+					note.removeChild(note.lastChild);
+
+					// remove link from footnote reference
+					noteRef.parentNode.replaceChild(noteRef.children[0], noteRef);
+				}
+
+				footnotes.parentNode.removeChild(footnotes);
+			}
+
+			function printURLs() {
+				var links = document.getElementsByTagName('a');;
+				for (var i = 0; i < links.length; i++) {
+					var link = links[i];
+					if (link.innerText.match(/^(https?|ftps?|sftp):\/\//)) {
+						continue;
+					}
+
+					var linkFootnoteText = link.innerText + ": " + link.getAttribute('href');
+					getFootnoteParagraph(link).appendChild(linkFootnoteText);
+					console.log("foo");
+				}
+			}
+
+			function wrapTablesForScrolling() {
+				var tables = document.getElementsByTagName('table');
+				for (var i = 0; i < tables.length; i++) {
+					var table = tables[i];
+					table.outerHTML = '<div style="overflow-x:auto">' + table.outerHTML + '</div>';
+				}
+			}
+
+
+			moveFootnotes();
+			// printURLs();
+			wrapTablesForScrolling();
+		</script>
+
+		<!-- Highlight.js -->
+		<script src="$TP_DIR$/prism.js/prism.js"></script>
+
+		<!-- KaTeX -->
+		<script src="$TP_DIR$/katex/katex.min.js"></script>
+		<script>
+			var mathElements = document.getElementsByClassName("math");
+			for (var i = 0; i < mathElements.length; i++) {
+				// remove \( and \)
+				var tex = mathElements[i].firstChild.data.slice(2, -2);
+				katex.render(tex, mathElements[i]);
+			}
+		</script>
+	</body>
+</html>

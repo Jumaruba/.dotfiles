@@ -87,6 +87,31 @@
 
 (setq lsp-enable-snippet nil)
 
+;; `+lookup/references' (find references) was slow: Doom routes xref through
+;; `consult-xref', whose minibuffer UI auto-previews EVERY candidate as you move
+;; -- each step opens and re-renders the target file (font-lock, line numbers,
+;; indent-guides, vc-gutter, posframe). Across many references that render churn
+;; is the cost. Bypass consult for xref results and use the built-in *xref*
+;; buffer instead: the whole list renders once, you browse it with n/p (RET or
+;; click to visit), and only the reference you pick is opened. No per-candidate
+;; preview. (Leaves `xref-show-definitions-function' on Doom's default, so
+;; jumping to an ambiguous definition still uses the quick consult picker.)
+(after! xref
+  (setq xref-show-xrefs-function #'xref--show-xref-buffer))
+
+;; macOS: by default Emacs grabs BOTH Option keys as Meta, so Option-based
+;; characters on non-US layouts (e.g. { } [ ]) never get inserted -- the
+;; keypress is consumed as a Meta command. (Concretely: `{' lives on Option+a
+;; key whose base char is `(', so as Meta it fires `M-(' = `insert-parentheses',
+;; which is why typing `{' produced a stray `(' instead.)
+;;
+;; This layout puts those chars on the LEFT Option, so free the LEFT Option to
+;; compose characters natively and move Meta to the RIGHT Option, keeping a Meta
+;; key for Emacs commands. (Swap the two if your layout uses the right Option.)
+(when (eq system-type 'darwin)
+  (setq ns-option-modifier 'none          ; left Option -> compose { } [ ] etc.
+        ns-right-option-modifier 'meta))  ; right Option -> Emacs Meta
+
 ;; FONTS ========================================
 ;; https://www.gnu.org/software/emacs/manual/html_node/elisp/Faces-for-Font-Lock.html
 (set-face-attribute 'font-lock-comment-face nil :foreground "#5B6268" :slant 'italic)
@@ -97,8 +122,38 @@
 
 ; TREEMACS
 (setq treemacs-width 60)
-(map! :leader
-      :desc "VC annotate" "g a" #'vc-annotate)
+
+(use-package! xclip
+  :config
+  (xclip-mode 1))
 
 (use-package! protobuf-mode
   :mode "\\.proto\\'")
+
+;; Launch the coursier-installed Metals THROUGH `mise exec`.
+;;
+;; Why the wrapper: this Emacs is started from the macOS dock/Spotlight, so it
+;; never sources ~/.zshrc and never runs `mise activate`. Without mise it has a
+;; bare PATH and no JAVA_HOME, so Metals would run under /usr/bin/java
+;; (OpenJDK 24) instead of the project's mise-managed Temurin 21. That JDK
+;; mismatch destabilises the presentation compiler and triggers repeated
+;; re-indexing -> "Find references" crawls.
+;;
+;; `mise exec` resolves the project's tools (java=temurin-21, scala=2.13.18) from
+;; the workspace root that lsp-mode launches the server in, and exports the right
+;; JAVA_HOME before handing off to the coursier metals launcher. Absolute paths
+;; are required: GUI Emacs's PATH contains neither /opt/homebrew/bin nor the
+;; coursier bin dir.
+;;
+;; Install with:  cs install metals   (and `mise use -g java@temurin-21`)
+(after! lsp-metals
+  (setq lsp-metals-server-command "/opt/homebrew/bin/mise"
+        lsp-metals-server-args
+        (list "exec" "--"
+              (expand-file-name "~/Library/Application Support/Coursier/bin/metals"))))
+
+
+(after! markdown-mode
+  (set-formatter! 'prettier
+    '("prettier" "--parser" "markdown")
+    :modes '(markdown-mode gfm-mode)))
