@@ -18,8 +18,6 @@ map({ "n", "v" }, "<leader>y", '"+y', { desc = "Yank to system clipboard" })
 map({ "n", "v" }, "<leader>p", '"+p', { desc = "Paste from system clipboard" })
 
 -- GIT
-map("n", "<leader>gB", "<cmd>Gitsigns blame<cr>", { desc = "Git Blame" })
-map("n", "<leader>gb", "<cmd>Gitsigns blame_line<cr>", { desc = "Git Blame line" })
 map("n", "<leader>gdo", "<cmd>DiffviewOpen<cr>", { desc = "Git Diffview open" })
 map("n", "<leader>gdc", "<cmd>DiffviewClose<cr>", { desc = "Git Diffview close" })
 map("n", "<leader>gdh", "<cmd>DiffviewFileHistory<cr>", { desc = "Git Diffview file history" })
