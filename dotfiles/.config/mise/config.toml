@@ -1,11 +1,13 @@
 [tools]
 coursier = "latest"
+"github:anomalyco/opencode" = "latest"
 # java = "temurin-11.0.28+6"
 java = "temurin-21"
 lazygit = "latest"
 lua = "5.1.1"
 neovim = "latest"
 node = "23.11.0"
+"npm:@openai/codex" = "latest"
 opentofu = "1.10.5"
 rust-analyzer = "latest"
 scala = "2.13.18"

@@ -5,11 +5,13 @@ return {
 		ensure_installed = {
 			"stylua",
 			"shfmt",
-			"pyright",
+			"basedpyright",
 			"rust-analyzer",
 			"marksman",
+			"prettier",
 			"tofu-ls",
 			"json-lsp",
+			"ruff",
 		},
 	},
 }

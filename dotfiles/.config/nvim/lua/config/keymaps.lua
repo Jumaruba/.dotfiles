@@ -5,7 +5,8 @@
 local map = vim.keymap.set
 
 map("n", "<leader>e", "<cmd>Explore<cr>", { desc = "File explorer" })
-map("n", "<leader>h", "<cmd>nohlsearch<cr>", { desc = "Clear search highlight" })
+-- <leader>h is left free as the harpoon prefix; <Esc> and <leader>ur already
+-- clear hlsearch.
 map("n", "<leader>l", "<cmd>Lazy<cr>", { desc = "Lazy" })
 
 -- buffers
@@ -22,3 +23,7 @@ map("n", "<leader>gdo", "<cmd>DiffviewOpen<cr>", { desc = "Git Diffview open" })
 map("n", "<leader>gdc", "<cmd>DiffviewClose<cr>", { desc = "Git Diffview close" })
 map("n", "<leader>gdh", "<cmd>DiffviewFileHistory<cr>", { desc = "Git Diffview file history" })
 map("n", "<leader>gdr", "<cmd>DiffviewRefresh<cr>", { desc = "Git Diffview refresh" })
+
+-- ctags navigation
+map("n", "md", "<C-]>", { desc = "Jump to tag definition" })
+map("n", "mt", "<C-t>", { desc = "Jump back from tag" })
